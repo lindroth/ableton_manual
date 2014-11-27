@@ -101,11 +101,5 @@ chapters.each{|chapter|
 	File.open(d + 'index.html','a') {|f| buffer.write_xml_to f}
 	File.open(d + 'index.html', 'a') { |file| file.write(footer) }
 }
-   
-#puts page.css("title")[0].name   # => title
-#puts page.css("title")[0].text   # => My webpage
-
-# doc = Nokogiri::XML(buffer)
-
 
 
