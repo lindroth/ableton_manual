@@ -59,6 +59,9 @@ File.open('index.html', 'a') { |file| file.write(index_footer) }
 
 chapters.uniq!
 
+Dir.mkdir 'images' if !File.exists?('./images')
+Dir.mkdir 'manual' if !File.exists?('./manual')
+
 chapters.each{|chapter|
 	url = "https://www.ableton.com/en" + chapter
 	puts "getting url " + url
@@ -79,15 +82,17 @@ chapters.each{|chapter|
 	img = buffer.css('img')
 
 	image_dir = 'images/' + chapter.split('/').last
-	Dir.mkdir 'images' unless File.exists?('images')
 	Dir.mkdir image_dir unless File.exists?(image_dir)
 	
 	img.each{|x|
 		image_name = x['src'].split('/').last		
-		
-		open(image_dir + '/' + image_name, 'wb') do |file|
+		full_image_path = image_dir + '/' + image_name		
+
+		open(full_image_path, 'wb') do |file|
   			file << open(x['src']).read
 		end
+
+		x['src'] = '../../' + image_dir + "/" + image_name
 	}
 
 	d = '.' + chapter
