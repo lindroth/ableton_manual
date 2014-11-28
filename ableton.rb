@@ -72,9 +72,15 @@ chapters.each{|chapter|
 
 	a.each{|x|
 		if(x['href'].end_with? "/" )
+			#Link to other chapter
 			x['href'] = '../../' + x['href'] + 'index.html'
 		elsif(x['href'].start_with? "http")
+			#Link outside of manual, let it be
+		elsif(x['href'].start_with? "#")
+			#Link to somewhere in the same chapter
+			x['href'] = '../..' + chapter + x['href'].gsub("#", "index.html#")
 		else
+			#link to section in other chapter
 			x['href'] = '../../' + x['href'].gsub("#", "index.html#")
 		end
 	}
