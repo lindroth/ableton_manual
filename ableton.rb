@@ -39,7 +39,7 @@ footer = '</div>
 chapters = Array.new
 index_head = "<html><body>"
 index_footer = "</body></html>"
-url = "https://www.ableton.com/en/manual/" 
+url = "https://www.ableton.com/en/manual/welcome-to-live" 
 page = Nokogiri::HTML(open(url))
 buffer = page.css('#manual_toc')[0]
 a = buffer.css('a')
@@ -59,11 +59,12 @@ File.open('index.html', 'a') { |file| file.write(index_footer) }
 
 chapters.uniq!
 
-Dir.mkdir 'images' if !File.exists?('./images')
-Dir.mkdir 'manual' if !File.exists?('./manual')
+Dir.mkdir 'en' if !File.exists?('./en')
+Dir.mkdir 'en/images' if !File.exists?('./en/images')
+Dir.mkdir 'en/manual' if !File.exists?('./en/manual')
 
 chapters.each{|chapter|
-	url = "https://www.ableton.com/en" + chapter
+	url = "https://www.ableton.com" + chapter
 	puts "getting url " + url
 	page = Nokogiri::HTML(open(url))
 	buffer = page.css('.content_panel')[0]
@@ -73,21 +74,21 @@ chapters.each{|chapter|
 	a.each{|x|
 		if(x['href'].end_with? "/" )
 			#Link to other chapter
-			x['href'] = '../../' + x['href'] + 'index.html'
+			x['href'] = '../../../' + x['href'] + 'index.html'
 		elsif(x['href'].start_with? "http")
 			#Link outside of manual, let it be
 		elsif(x['href'].start_with? "#")
 			#Link to somewhere in the same chapter
-			x['href'] = '../..' + chapter + x['href'].gsub("#", "index.html#")
+			x['href'] = '../../..' + chapter + x['href'].gsub("#", "index.html#")
 		else
 			#link to section in other chapter
-			x['href'] = '../../' + x['href'].gsub("#", "index.html#")
+			x['href'] = '../../../' + x['href'].gsub("#", "index.html#")
 		end
 	}
 
 	img = buffer.css('img')
 
-	image_dir = 'images/' + chapter.split('/').last
+	image_dir = 'en/images/' + chapter.split('/').last
 	Dir.mkdir image_dir unless File.exists?(image_dir)
 	
 	img.each{|x|
@@ -98,11 +99,11 @@ chapters.each{|chapter|
   			file << open(x['src']).read
 		end
 
-		x['src'] = '../../' + image_dir + "/" + image_name
+		x['src'] = '../../../' + image_dir + "/" + image_name
 	}
 
 	d = '.' + chapter
-	Dir.mkdir d unless File.exists?(d)
+	FileUtils.mkdir_p d unless File.exists?(d)
 	File.open(d + 'index.html', 'w') { |file| file.write(head) }
 	File.open(d + 'index.html','a') {|f| buffer.write_xml_to f}
 	File.open(d + 'index.html', 'a') { |file| file.write(footer) }
