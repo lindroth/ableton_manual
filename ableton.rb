@@ -37,10 +37,10 @@ footer = '</div>
 </html>'
 
 chapters = Array.new
-index_head = "<html><body>"
+index_head = "<html><head><meta charset=\"UTF-8\"></head><body>"
 index_footer = "</body></html>"
 url = "https://www.ableton.com/en/manual/welcome-to-live" 
-page = Nokogiri::HTML(open(url))
+page = Nokogiri::HTML(open(url), nil, Encoding::UTF_8.to_s)
 buffer = page.css('#manual_toc')[0]
 a = buffer.css('a')
 
@@ -66,8 +66,8 @@ Dir.mkdir 'en/manual' if !File.exists?('./en/manual')
 chapters.each{|chapter|
 	url = "https://www.ableton.com" + chapter
 	puts "getting url " + url
-	page = Nokogiri::HTML(open(url))
-	buffer = page.css('.content_panel')[0]
+	page = Nokogiri::HTML(open(url), nil, Encoding::UTF_8.to_s)
+	buffer = page.css('#chapter_content')[0]
 
 	a = buffer.css('a')
 
